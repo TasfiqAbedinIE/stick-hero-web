@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Stick Hero — a simple, addictive arcade game. Build the perfect stick, cross platforms, and chase high scores!" />
+  <meta property="og:title" content="Stick Hero — Simple Arcade Game" />
+  <meta property="og:description" content="Build the perfect stick, cross platforms, and chase high scores." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/screenshots/1.png" />
+  <title>Stick Hero — Simple Arcade Game</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg0:#060818;
+      --bg1:#0a1d4d;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.58);
+      --accent1:#00e5ff;
+      --accent2:#ff3d81;
+      --accent3:#ffd166;
+      --good:#18f2a5;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 26px;
+      --max: 1120px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Outfit", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(0,229,255,.22), transparent 60%),
+        radial-gradient(1000px 700px at 85% 20%, rgba(255,61,129,.18), transparent 55%),
+        radial-gradient(900px 900px at 60% 90%, rgba(255,209,102,.14), transparent 58%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:24px}
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 14px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border-radius:999px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-weight:600;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: conic-gradient(from 180deg, var(--accent1), var(--accent2), var(--accent3), var(--accent1));
+      box-shadow: 0 0 0 4px rgba(0,229,255,.12), 0 0 18px rgba(0,229,255,.35);
+    }
+
+    /* Top nav */
+    .nav{
+      position:sticky; top:0; z-index:10;
+      background: linear-gradient(180deg, rgba(6,8,24,.65), rgba(6,8,24,.15));
+      border-bottom:1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:18px}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.2px}
+    .logo{
+      width:38px; height:38px; border-radius:14px;
+      background:
+        radial-gradient(circle at 30% 35%, rgba(255,255,255,.25), transparent 50%),
+        conic-gradient(from 180deg, var(--accent1), var(--accent2), var(--accent3), var(--accent1));
+      box-shadow: 0 16px 44px rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.16);
+    }
+    .links{display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+    .links a{
+      color:var(--muted);
+      font-weight:600;
+      padding:10px 10px;
+      border-radius:12px;
+      transition: all .18s ease;
+    }
+    .links a:hover{color:var(--text); background:rgba(255,255,255,.06)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 16px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      font-weight:700;
+      box-shadow: 0 14px 44px rgba(0,0,0,.25);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.11); border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      border:0;
+      background: linear-gradient(135deg, rgba(0,229,255,.95), rgba(255,61,129,.92));
+      color:#071225;
+      text-shadow:none;
+    }
+    .btn.primary:hover{transform: translateY(-2px)}
+    .btn.ghost{background: rgba(255,255,255,.06)}
+    .btn small{font-weight:700; opacity:.9}
+
+    /* Hero */
+    .hero{
+      padding: 46px 0 22px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 26px;
+      align-items:stretch;
+    }
+    .hero h1{
+      margin:16px 0 12px;
+      font-size: clamp(34px, 4.2vw, 58px);
+      line-height: 1.02;
+      letter-spacing: -0.8px;
+    }
+    .subtitle{
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+      max-width: 56ch;
+      margin: 0 0 18px;
+    }
+    .hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:16px}
+    .stats{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:18px;
+    }
+    .chip{
+      padding:10px 12px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+      color: var(--muted);
+      font-weight:600;
+    }
+    .chip b{color:var(--text)}
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .preview{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+    }
+    .preview-top{
+      padding: 16px 16px 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: rgba(0,229,255,.12);
+      border:1px solid rgba(0,229,255,.22);
+      color: var(--text);
+      font-weight:700;
+    }
+    .badge .mini{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--good);
+      box-shadow: 0 0 0 4px rgba(24,242,165,.12);
+    }
+    .mock{
+      position:relative;
+      padding: 0 16px 16px;
+      display:grid;
+      gap:12px;
+    }
+    .mock img{
+      width:100%;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    }
+
+    /* Sections */
+    section{padding: 26px 0}
+    .section-title{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 14px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size: 26px;
+      letter-spacing: -.3px;
+    }
+    .section-title p{margin:0; color:var(--muted)}
+    .grid-3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .feature{
+      padding:16px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      box-shadow: 0 14px 40px rgba(0,0,0,.18);
+      min-height: 140px;
+    }
+    .feature .icon{
+      width:44px; height:44px; border-radius:16px;
+      display:grid; place-items:center;
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(circle at 30% 35%, rgba(255,255,255,.18), transparent 55%),
+        linear-gradient(135deg, rgba(0,229,255,.35), rgba(255,61,129,.25));
+      margin-bottom:10px;
+      font-size:20px;
+    }
+    .feature h3{margin:0 0 6px; font-size:18px}
+    .feature p{margin:0; color:var(--muted); line-height:1.5}
+
+    /* Video */
+    .video{
+      display:grid;
+      grid-template-columns: 1fr .9fr;
+      gap: 14px;
+      align-items:stretch;
+    }
+    .video-card{padding:14px}
+    .video-frame{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      min-height: 280px;
+    }
+    video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+    }
+    .video-note{
+      padding:16px;
+    }
+    .steps{margin:10px 0 0; padding-left:18px; color:var(--muted); line-height:1.6}
+    .steps li{margin:6px 0}
+    .kbd{
+      display:inline-block;
+      padding:3px 8px;
+      border-radius: 10px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      font-weight:700;
+      font-size: 13px;
+      letter-spacing:.3px;
+    }
+
+    /* Gallery */
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .shot{
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 18px 44px rgba(0,0,0,.18);
+      position:relative;
+      cursor:pointer;
+      transform: translateZ(0);
+      transition: transform .18s ease;
+    }
+    .shot:hover{transform: translateY(-3px)}
+    .shot img{width:100%; height:100%; object-fit:cover; display:block}
+
+    /* Download */
+    .download{
+      padding: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      flex-wrap:wrap;
+    }
+    .download h3{margin:0 0 6px; font-size:20px}
+    .download p{margin:0; color:var(--muted)}
+
+    /* Footer */
+    footer{
+      padding: 26px 0 36px;
+      color: var(--muted2);
+      border-top: 1px solid rgba(255,255,255,.08);
+      margin-top: 24px;
+    }
+
+    /* Lightbox */
+    .lightbox{
+      position:fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      background: rgba(0,0,0,.72);
+      z-index: 50;
+      padding: 18px;
+    }
+    .lightbox.open{display:grid}
+    .lightbox img{
+      max-width: min(1100px, 95vw);
+      max-height: 85vh;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      background: rgba(0,0,0,.25);
+    }
+    .lightbox .hint{
+      margin-top: 10px;
+      color: rgba(255,255,255,.72);
+      font-weight:600;
+      text-align:center;
+    }
+
+    /* Animations */
+    .reveal{
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.on{
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 960px){
+      .hero{grid-template-columns: 1fr; padding-top: 26px}
+      .video{grid-template-columns: 1fr}
+      .grid-3{grid-template-columns: 1fr}
+      .gallery{grid-template-columns: repeat(2, 1fr)}
+    }
+    @media (max-width: 520px){
+      .gallery{grid-template-columns: 1fr}
+      .links{display:none}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="nav">
+    <div class="wrap nav-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:14px; color:var(--muted2); font-weight:700; letter-spacing:.4px;">ARCADE GAME</div>
+          <div style="font-size:18px; font-weight:900;">Stick Hero</div>
+        </div>
+      </div>
+
+      <div class="links">
+        <a href="#features">Features</a>
+        <a href="#how">How to Play</a>
+        <a href="#gallery">Screenshots</a>
+        <a href="#download">Download</a>
+      </div>
+
+      <a class="btn primary" href="#download" aria-label="Download Stick Hero">
+        ⬇️ <span>Download</span>
+      </a>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <!-- HERO -->
+    <div class="hero">
+      <div class="reveal">
+        <div class="pill"><span class="dot" aria-hidden="true"></span> A simple game you’ll replay for “one more try”</div>
+
+        <h1>
+          Build the perfect stick.<br />
+          Cross platforms.<br />
+          <span style="background:linear-gradient(135deg, var(--accent1), var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent;">
+            Beat your high score.
+          </span>
+        </h1>
+
+        <p class="subtitle">
+          <b>Stick Hero</b> is a quick arcade game: press and hold to grow the stick, release to drop it,
+          and walk across. Too short or too long? Game over.
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn primary" href="assets/stick-hero.zip" download>
+            🎮 Download Game <small>(ZIP)</small>
+          </a>
+          <a class="btn ghost" href="#how">
+            ▶️ Watch How to Play
+          </a>
+          <a class="btn" href="#gallery">
+            🖼️ View Screenshots
+          </a>
+        </div>
+
+        <div class="stats">
+          <span class="chip">Controls: <b>S</b> Start · <b>Space</b> Stick Up</span>
+          <span class="chip">Goal: <b>Cross as far as possible</b></span>
+          <span class="chip">Style: <b>Minimal + Fun</b></span>
+        </div>
+      </div>
+
+      <div class="card preview reveal">
+        <div class="preview-top">
+          <div class="badge"><span class="mini" aria-hidden="true"></span> Gameplay Preview</div>
+          <a class="btn" href="#how">How to play →</a>
+        </div>
+        <div class="mock">
+          <img src="assets/screenshots/1.png" alt="Stick Hero screenshot - start screen" />
+          <img src="assets/screenshots/4.png" alt="Stick Hero screenshot - game over screen" />
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section id="features" class="reveal">
+      <div class="section-title">
+        <h2>Why you’ll love it</h2>
+        <p>Simple controls, skill-based timing, addictive loop.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="feature">
+          <div class="icon">⚡</div>
+          <h3>Instant fun</h3>
+          <p>Start playing in seconds. Each round is quick, so it’s perfect for short breaks.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🎯</div>
+          <h3>Skill-based timing</h3>
+          <p>Press-and-hold growth makes every jump a small challenge. Easy to learn, hard to master.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🏆</div>
+          <h3>High-score chase</h3>
+          <p>Keep improving. One more try… and then another… until you beat your best score.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW TO PLAY -->
+    <section id="how" class="reveal">
+      <div class="section-title">
+        <h2>How to play</h2>
+        <p>Watch the short video or follow the steps.</p>
+      </div>
+
+      <div class="video">
+        <div class="card video-card">
+          <div class="video-frame">
+            <!-- Put your video at: assets/how-to-play.mp4 -->
+            <video controls preload="metadata" poster="assets/screenshots/2.png">
+              <source src="assets/how-to-play.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+
+        <div class="card video-note">
+          <h3 style="margin:0 0 10px;">Steps</h3>
+          <ol class="steps">
+            <li>Press <span class="kbd">S</span> to start.</li>
+            <li>Hold <span class="kbd">Space</span> to grow the stick.</li>
+            <li>Release <span class="kbd">Space</span> to drop the stick.</li>
+            <li>If the stick perfectly reaches the next platform—your hero crosses safely.</li>
+            <li>Miss the distance (too short/too long) and it’s game over.</li>
+          </ol>
+
+          <div style="margin-top:14px; padding:12px 12px; border-radius:16px; border:1px dashed rgba(255,255,255,.18); background: rgba(255,255,255,.06); color:var(--muted);">
+            Pro tip: try to land near the center of the next platform for consistent scoring.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery" class="reveal">
+      <div class="section-title">
+        <h2>Screenshots</h2>
+        <p>Click to view full size.</p>
+      </div>
+
+      <div class="gallery">
+        <div class="shot" data-full="assets/screenshots/1.png"><img src="assets/screenshots/1.png" alt="Screenshot 1" /></div>
+        <div class="shot" data-full="assets/screenshots/2.png"><img src="assets/screenshots/2.png" alt="Screenshot 2" /></div>
+        <div class="shot" data-full="assets/screenshots/3.png"><img src="assets/screenshots/3.png" alt="Screenshot 3" /></div>
+        <div class="shot" data-full="assets/screenshots/4.png"><img src="assets/screenshots/4.png" alt="Screenshot 4" /></div>
+      </div>
+    </section>
+
+    <!-- DOWNLOAD -->
+    <section id="download" class="reveal">
+      <div class="card download">
+        <div>
+          <h3>Download Stick Hero</h3>
+          <p>Get the game ZIP from the assets folder (perfect for GitHub Pages).</p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn primary" href="assets/stick-hero.zip" download>⬇️ Download ZIP</a>
+          <a class="btn" href="#how">▶️ Watch tutorial</a>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; color:var(--muted2); font-size:14px;">
+        Tip: If your ZIP is large, GitHub Pages still works—just keep it under GitHub’s file size limits.
+      </div>
+    </section>
+
+    <footer>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <div>© <span id="year"></span> Stick Hero · Built for GitHub Pages</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="#features">↑ Back to top</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div>
+      <img id="lightboxImg" alt="Full screenshot" />
+      <div class="hint">Click anywhere or press ESC to close</div>
+    </div>
+  </div>
+
+  <script>
+    // Smooth reveal on scroll
+    const revealEls = Array.from(document.querySelectorAll(".reveal"));
+    const onScroll = () => {
+      const vh = window.innerHeight;
+      revealEls.forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < vh - 80) el.classList.add("on");
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("load", onScroll);
+
+    // Lightbox gallery
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+
+    document.querySelectorAll(".shot").forEach(s => {
+      s.addEventListener("click", () => {
+        const src = s.getAttribute("data-full");
+        lightboxImg.src = src;
+        lightbox.classList.add("open");
+        lightbox.setAttribute("aria-hidden", "false");
+      });
+    });
+
+    const closeLb = () => {
+      lightbox.classList.remove("open");
+      lightbox.setAttribute("aria-hidden", "true");
+      lightboxImg.src = "";
+    };
+
+    lightbox.addEventListener("click", closeLb);
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLb();
+    });
+
+    // Footer year
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
